@@ -1,4 +1,4 @@
-(function () {
+(() => {
     "use strict";
 
     const X = 10;
@@ -208,7 +208,7 @@
         }
 
         loop() {
-            this.loopID = setInterval(function () {
+            this.loopID = setInterval(() => {
                 window.Tetris.tick();
             }, DT);
         }
@@ -251,7 +251,7 @@
         }
 
         render() {
-            window.requestAnimationFrame(function () {
+            window.requestAnimationFrame(() => {
                 window.Tetris.render();
             });
 
@@ -525,7 +525,7 @@
         return Math.min(window.Tetris.canvas.width / WIDTH, window.Tetris.canvas.height / HEIGHT);
     }
 
-    window.onload = function () {
+    window.onload = () => {
         window.Tetris = new Tetris();
         window.Tetris.canvas = document.getElementById("canvas");
         window.Tetris.context = window.Tetris.canvas.getContext("2d");
