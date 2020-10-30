@@ -183,16 +183,7 @@
         constructor() {
             this.state = PLAYING;
             this.bag = [];
-        }
 
-        main(canvas, context) {
-            this.init();
-
-            this.loop();
-            this.render(canvas, context);
-        }
-
-        init() {
             // Preallocate
             this.grid = new Array(X);
             for (let i = 0; i < this.grid.length; ++i) {
@@ -205,11 +196,17 @@
                     this.grid[i][j] = new Cell(i, j);
                 }
             }
+
+            this.canvas = document.getElementById("canvas");
+            this.context = this.canvas.getContext("2d");
+            window.addEventListener('keydown', (e) => this.handleKeypress(e));
+            this.loop();
         }
 
         loop() {
             this.loopID = setInterval(() => {
                 this.tick();
+                window.requestAnimationFrame(() => this.render());
             }, DT);
         }
 
@@ -250,28 +247,26 @@
             return false;
         }
 
-        render(canvas, context) {
+        render() {
             const ratio = getScreenRatio(canvas);
             const px = (dp) => dp * ratio;
 
-            canvas.width = window.innerWidth - 20;
-            canvas.height = window.innerHeight - 20;
+            this.canvas.width = window.innerWidth - 20;
+            this.canvas.height = window.innerHeight - 20;
 
             // Grid
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             for (let i = 0; i < X; ++i) {
                 for (let j = 1; j < Y; ++j) {
-                    this.grid[i][j].render(canvas, context);
+                    this.grid[i][j].render(this.canvas, this.context);
                 }
             }
 
             // Game Over
             if (this.state == DEFEATED) {
-                context.font = px(20) + "px Georgia";
-                context.fillStyle = "black";
-                context.fillText("Game Over", 400, 200);
-            } else {
-                window.requestAnimationFrame(() => this.render(canvas, context));
+                this.context.font = px(20) + "px Georgia";
+                this.context.fillStyle = "black";
+                this.context.fillText("Game Over", 400, 200);
             }
         }
 
@@ -464,6 +459,7 @@
                     this.dropTetrimino();
                     break;
             }
+            window.requestAnimationFrame(() => this.render());
         }
     }
 
@@ -529,11 +525,5 @@
 
     window.onload = () => {
         const tetris = new Tetris();
-        const canvas = document.getElementById("canvas");
-        const context = canvas.getContext("2d");
-
-        window.addEventListener('keydown', (e) => tetris.handleKeypress(e));
-
-        tetris.main(canvas, context);
     }
 })();
