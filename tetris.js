@@ -185,11 +185,11 @@
             this.bag = [];
         }
 
-        main() {
+        main(canvas, context) {
             this.init();
 
             this.loop();
-            this.render();
+            this.render(canvas, context);
         }
 
         init() {
@@ -209,7 +209,7 @@
 
         loop() {
             this.loopID = setInterval(() => {
-                window.Tetris.tick();
+                this.tick();
             }, DT);
         }
 
@@ -250,27 +250,28 @@
             return false;
         }
 
-        render() {
-            window.requestAnimationFrame(() => {
-                window.Tetris.render();
-            });
+        render(canvas, context) {
+            const ratio = getScreenRatio(canvas);
+            const px = (dp) => dp * ratio;
 
-            this.canvas.width = window.innerWidth - 20;
-            this.canvas.height = window.innerHeight - 20;
+            canvas.width = window.innerWidth - 20;
+            canvas.height = window.innerHeight - 20;
 
             // Grid
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            context.clearRect(0, 0, canvas.width, canvas.height);
             for (let i = 0; i < X; ++i) {
                 for (let j = 1; j < Y; ++j) {
-                    this.grid[i][j].render(this.context);
+                    this.grid[i][j].render(canvas, context);
                 }
             }
 
             // Game Over
             if (this.state == DEFEATED) {
-                this.context.font = px(20) + "px Georgia";
-                this.context.fillStyle = "black";
-                this.context.fillText("Game Over", 400, 200);
+                context.font = px(20) + "px Georgia";
+                context.fillStyle = "black";
+                context.fillText("Game Over", 400, 200);
+            } else {
+                window.requestAnimationFrame(() => this.render(canvas, context));
             }
         }
 
@@ -443,7 +444,28 @@
 
             return false;
         }
-    };
+
+        handleKeypress(e) {
+            if (!this.tetrimino) {
+                return;
+            }
+
+            switch (e.which) {
+                case LEFT:
+                    this.moveLeft();
+                    break;
+                case RIGHT:
+                    this.moveRight();
+                    break;
+                case UP:
+                    this.rotate();
+                    break;
+                case DOWN:
+                    this.dropTetrimino();
+                    break;
+            }
+        }
+    }
 
     class Cell {
         constructor(x, y) {
@@ -452,8 +474,9 @@
             this.occupied = false;
         }
 
-        render(ctx) {
-            var ratio = getScreenRatio();
+        render(canvas, ctx) {
+            const ratio = getScreenRatio(canvas);
+            const px = (dp) => dp * ratio;
 
             if (this.occupied) {
                 this.fill(ctx);
@@ -469,6 +492,8 @@
         }
 
         clear(ctx) {
+            const ratio = getScreenRatio(canvas);
+            const px = (dp) => dp * ratio;
             ctx.clearRect(
                 px(GRID_X_OFFSET + this.x * BLOCK_SIZE),
                 px(GRID_Y_OFFSET + this.y * BLOCK_SIZE),
@@ -476,6 +501,8 @@
         }
 
         fill(ctx) {
+            const ratio = getScreenRatio(canvas);
+            const px = (dp) => dp * ratio;
             ctx.fillStyle = this.color;
             ctx.fillRect(
                 px(GRID_X_OFFSET + this.x * BLOCK_SIZE),
@@ -496,42 +523,17 @@
         return a;
     }
 
-    function handleKeypress(e) {
-        if (!window.Tetris.tetrimino) {
-            return;
-        }
-
-        switch (e.which) {
-            case LEFT:
-                window.Tetris.moveLeft();
-                break;
-            case RIGHT:
-                window.Tetris.moveRight();
-                break;
-            case UP:
-                window.Tetris.rotate();
-                break;
-            case DOWN:
-                window.Tetris.dropTetrimino();
-                break;
-        }
-    }
-
-    function px(dp) {
-        return dp * getScreenRatio();
-    }
-
-    function getScreenRatio() {
-        return Math.min(window.Tetris.canvas.width / WIDTH, window.Tetris.canvas.height / HEIGHT);
+    function getScreenRatio(canvas) {
+        return Math.min(canvas.width / WIDTH, canvas.height / HEIGHT);
     }
 
     window.onload = () => {
-        window.Tetris = new Tetris();
-        window.Tetris.canvas = document.getElementById("canvas");
-        window.Tetris.context = window.Tetris.canvas.getContext("2d");
+        const tetris = new Tetris();
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext("2d");
 
-        window.addEventListener('keydown', handleKeypress);
+        window.addEventListener('keydown', (e) => tetris.handleKeypress(e));
 
-        window.Tetris.main();
+        tetris.main(canvas, context);
     }
 })();
