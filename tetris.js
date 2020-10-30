@@ -129,17 +129,20 @@
         ],
     };
 
-    window.Tetris = {
-        state: PLAYING,
-        bag: [],
-        main: function() {
+    class Tetris {
+        constructor() {
+            this.state = PLAYING;
+            this.bag = [];
+        }
+
+        main() {
             this.init();
 
             this.loop();
             this.render();
-        },
+        }
 
-        init: function() {
+        init() {
             // Preallocate
             this.grid = new Array(X);
             for (let i = 0; i < this.grid.length; ++i) {
@@ -152,15 +155,15 @@
                     this.grid[i][j] = new Cell(i, j);
                 }
             }
-        },
+        }
 
-        loop: function() {
+        loop() {
             this.loopID = setInterval(function() {
-                    Tetris.tick();
-                    }, DT);
-        },
+                window.Tetris.tick();
+            }, DT);
+        }
 
-        tick: function() {
+        tick() {
             switch(this.state) {
             case PLAYING:
                 this.playingTick();
@@ -168,9 +171,9 @@
             default:
                 return;
             }
-        },
+        }
 
-        playingTick: function() {
+        playingTick() {
             if (this.isDefeated()) {
                 this.state = DEFEATED;
                 return;
@@ -182,9 +185,9 @@
             } else {
                 this.dropTetrimino();
             }
-        },
+        }
 
-        isDefeated: function() {
+        isDefeated() {
             if (this.tetrimino) {
                 return false;
             }
@@ -195,11 +198,11 @@
                 }
             }
             return false;
-        },
+        }
 
-        render: function() {
+        render() {
             window.requestAnimationFrame(function() {
-                Tetris.render();
+                window.Tetris.render();
             });
 
             this.canvas.width = window.innerWidth - 20;
@@ -219,24 +222,24 @@
                 this.context.fillStyle = "black";
                 this.context.fillText("Game Over", 400, 200);
             }
-        },
+        }
 
-        chooseTetrimino: function() {
+        chooseTetrimino() {
             if (this.bag.length === 0) {
                 this.bag = shuffle(["I", "J", "L", "S", "T", "Z", "O"]);
             }
             return this.bag.pop();
-        },
+        }
 
-        makeTetrimino: function(shape) {
+        makeTetrimino(shape) {
             this.tetrimino = {
                 origin: {x: 3, y: 0},
                 shape: shape,
                 orientation: 0,
             };
-        },
+        }
 
-        move: function(newOrigin, o) {
+        move(newOrigin, o) {
             let orientation = ORIENTATIONS[this.tetrimino.shape][this.tetrimino.orientation];
             const newOrientation = ORIENTATIONS[this.tetrimino.shape][o];
             const color = COLORS[this.tetrimino.shape];
@@ -281,9 +284,9 @@
             }
 
             return !collision;
-        },
+        }
 
-        removeFinishedRows: function() {
+        removeFinishedRows() {
             for (let y = 0; y < Y; ++y) {
 
                 // Check for full row
@@ -314,21 +317,21 @@
                     }
                 }
             }
-        },
+        }
 
-        moveLeft: function() {
+        moveLeft() {
             const newOrigin = {x: this.tetrimino.origin.x - 1, y: this.tetrimino.origin.y}
 
             return this.move(newOrigin, this.tetrimino.orientation);
-        },
+        }
 
-        moveRight: function() {
+        moveRight() {
             const newOrigin = {x: this.tetrimino.origin.x + 1, y: this.tetrimino.origin.y};
 
             return this.move(newOrigin, this.tetrimino.orientation);
-        },
+        }
 
-        rotate: function() {
+        rotate() {
             clearInterval(this.loopID);
 
             const o = (this.tetrimino.orientation + 1) % ORIENTATIONS[this.tetrimino.shape].length;
@@ -349,17 +352,17 @@
             }
 
             this.loop();
-        },
+        }
 
-        tryRotation: function(newOrigin, o) {
+        tryRotation(newOrigin, o) {
             const success = this.move(newOrigin, o);
             if (success) {
                 this.tetrimino.orientation = o;
             }
             return success;
-        },
+        }
 
-        dropTetrimino: function() {
+        dropTetrimino() {
             const newOrigin = {x: this.tetrimino.origin.x, y: this.tetrimino.origin.y + 1};
             const orientation = this.tetrimino.orientation;
 
@@ -369,9 +372,9 @@
             if (!success) {
                 this.tetrimino = undefined;
             }
-        },
+        }
 
-        isColliding: function(origin, orientation) {
+        isColliding(origin, orientation) {
             for (let i = 0; i < orientation.length; ++i) {
                 for (let j = 0; j < orientation[i].length; ++j) {
                     if (orientation[i][j] !== '#') {
@@ -389,7 +392,7 @@
             }
 
             return false;
-        },
+        }
     };
 
     class Cell {
@@ -444,22 +447,22 @@
     }
 
     function handleKeypress(e) {
-        if (!Tetris.tetrimino) {
+        if (!window.Tetris.tetrimino) {
             return;
         }
 
         switch (e.which) {
             case LEFT:
-                Tetris.moveLeft();
+                window.Tetris.moveLeft();
                 break;
             case RIGHT:
-                Tetris.moveRight();
+                window.Tetris.moveRight();
                 break;
             case UP:
-                Tetris.rotate();
+                window.Tetris.rotate();
                 break;
             case DOWN:
-                Tetris.dropTetrimino();
+                window.Tetris.dropTetrimino();
                 break;
         }
     }
@@ -469,15 +472,16 @@
     }
 
     function getScreenRatio() {
-        return Math.min(Tetris.canvas.width / WIDTH, Tetris.canvas.height / HEIGHT);
+        return Math.min(window.Tetris.canvas.width / WIDTH, window.Tetris.canvas.height / HEIGHT);
     }
 
     window.onload = function() {
-        Tetris.canvas = document.getElementById("canvas");
-        Tetris.context = Tetris.canvas.getContext("2d");
+        window.Tetris = new Tetris();
+        window.Tetris.canvas = document.getElementById("canvas");
+        window.Tetris.context = window.Tetris.canvas.getContext("2d");
 
         window.addEventListener('keydown', handleKeypress);
 
-        Tetris.main();
+        window.Tetris.main();
     }
 })();
