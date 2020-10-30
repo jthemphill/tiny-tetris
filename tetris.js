@@ -1,4 +1,4 @@
-(function() {
+(function () {
     "use strict";
 
     const X = 10;
@@ -35,97 +35,147 @@
     // From the SRS spec
     const ORIENTATIONS = {
         I: [
-            ["....",
-             "####",
-             "....",
-             "...."],
-            ["..#.",
-             "..#.",
-             "..#.",
-             "..#."],
-            ["....",
-             "....",
-             "####",
-             "...."],
-            [".#..",
-             ".#..",
-             ".#..",
-             ".#.."],
+            [
+                "....",
+                "####",
+                "....",
+                "...."
+            ],
+            [
+                "..#.",
+                "..#.",
+                "..#.",
+                "..#."
+            ],
+            [
+                "....",
+                "....",
+                "####",
+                "...."
+            ],
+            [
+                ".#..",
+                ".#..",
+                ".#..",
+                ".#.."
+            ],
         ],
         J: [
-            ["#..",
-             "###",
-             "..."],
-            [".##",
-             ".#.",
-             ".#."],
-            ["...",
-             "###",
-             "..#."],
-            [".#.",
-             ".#.",
-             "##."],
+            [
+                "#..",
+                "###",
+                "..."
+            ],
+            [
+                ".##",
+                ".#.",
+                ".#."
+            ],
+            [
+                "...",
+                "###",
+                "..#."
+            ],
+            [
+                ".#.",
+                ".#.",
+                "##."
+            ],
         ],
         L: [
-            ["..#",
-             "###",
-             "..."],
-            [".#.",
-             ".#.",
-             ".##"],
-            ["...",
-             "###",
-             "#.."],
-            ["##.",
-             ".#.",
-             ".#."],
+            [
+                "..#",
+                "###",
+                "..."
+            ],
+            [
+                ".#.",
+                ".#.",
+                ".##"
+            ],
+            [
+                "...",
+                "###",
+                "#.."
+            ],
+            [
+                "##.",
+                ".#.",
+                ".#."
+            ],
         ],
         O: [
-            [".##.",
-             ".##.",
-             "...."],
+            [
+                ".##.",
+                ".##.",
+                "...."
+            ],
         ],
         S: [
-            [".##",
-             "##.",
-             "..."],
-            [".#.",
-             ".##",
-             "..#"],
-            ["...",
-             ".##",
-             "##."],
-            ["#..",
-             "##.",
-             ".#."],
+            [
+                ".##",
+                "##.",
+                "..."
+            ],
+            [
+                ".#.",
+                ".##",
+                "..#"
+            ],
+            [
+                "...",
+                ".##",
+                "##."
+            ],
+            [
+                "#..",
+                "##.",
+                ".#."
+            ],
         ],
         T: [
-            [".#.",
-             "###",
-             "..."],
-            [".#.",
-             ".##",
-             ".#."],
-            ["...",
-             "###",
-             ".#."],
-            [".#.",
-             "##.",
-             ".#."],
+            [
+                ".#.",
+                "###",
+                "..."
+            ],
+            [
+                ".#.",
+                ".##",
+                ".#."
+            ],
+            [
+                "...",
+                "###",
+                ".#."
+            ],
+            [
+                ".#.",
+                "##.",
+                ".#."
+            ],
         ],
         Z: [
-            ["##.",
-             ".##",
-             "..."],
-            ["..#",
-             ".##",
-             ".#."],
-            ["...",
-             "##.",
-             ".##"],
-            [".#.",
-             "##.",
-             "#.."],
+            [
+                "##.",
+                ".##",
+                "..."
+            ],
+            [
+                "..#",
+                ".##",
+                ".#."
+            ],
+            [
+                "...",
+                "##.",
+                ".##"
+            ],
+            [
+                ".#.",
+                "##.",
+                "#.."
+            ],
         ],
     };
 
@@ -158,18 +208,18 @@
         }
 
         loop() {
-            this.loopID = setInterval(function() {
+            this.loopID = setInterval(function () {
                 window.Tetris.tick();
             }, DT);
         }
 
         tick() {
-            switch(this.state) {
-            case PLAYING:
-                this.playingTick();
-                return;
-            default:
-                return;
+            switch (this.state) {
+                case PLAYING:
+                    this.playingTick();
+                    return;
+                default:
+                    return;
             }
         }
 
@@ -201,7 +251,7 @@
         }
 
         render() {
-            window.requestAnimationFrame(function() {
+            window.requestAnimationFrame(function () {
                 window.Tetris.render();
             });
 
@@ -233,7 +283,7 @@
 
         makeTetrimino(shape) {
             this.tetrimino = {
-                origin: {x: 3, y: 0},
+                origin: { x: 3, y: 0 },
                 shape: shape,
                 orientation: 0,
             };
@@ -306,27 +356,27 @@
                 }
 
                 // Drop
-                for (y = y - 1; y >=0; --y) {
+                for (y = y - 1; y >= 0; --y) {
                     for (let x = 0; x < X; ++x) {
                         if (!this.grid[x][y].occupied) {
                             continue;
                         }
                         this.grid[x][y].occupied = false;
-                        this.grid[x][y+1].occupied = true;
-                        this.grid[x][y+1].color = this.grid[x][y].color;
+                        this.grid[x][y + 1].occupied = true;
+                        this.grid[x][y + 1].color = this.grid[x][y].color;
                     }
                 }
             }
         }
 
         moveLeft() {
-            const newOrigin = {x: this.tetrimino.origin.x - 1, y: this.tetrimino.origin.y}
+            const newOrigin = { x: this.tetrimino.origin.x - 1, y: this.tetrimino.origin.y }
 
             return this.move(newOrigin, this.tetrimino.orientation);
         }
 
         moveRight() {
-            const newOrigin = {x: this.tetrimino.origin.x + 1, y: this.tetrimino.origin.y};
+            const newOrigin = { x: this.tetrimino.origin.x + 1, y: this.tetrimino.origin.y };
 
             return this.move(newOrigin, this.tetrimino.orientation);
         }
@@ -341,13 +391,13 @@
 
             // Left wall kick
             if (!success) {
-                newOrigin = {x: this.tetrimino.origin.x - 1, y: this.tetrimino.origin.y};
+                newOrigin = { x: this.tetrimino.origin.x - 1, y: this.tetrimino.origin.y };
                 success = this.tryRotation(newOrigin, o);
             }
 
             // Right wall kick
             if (!success) {
-                newOrigin = {x: this.tetrimino.origin.x + 1, y: this.tetrimino.origin.y};
+                newOrigin = { x: this.tetrimino.origin.x + 1, y: this.tetrimino.origin.y };
                 success = this.tryRotation(newOrigin, o);
             }
 
@@ -363,7 +413,7 @@
         }
 
         dropTetrimino() {
-            const newOrigin = {x: this.tetrimino.origin.x, y: this.tetrimino.origin.y + 1};
+            const newOrigin = { x: this.tetrimino.origin.x, y: this.tetrimino.origin.y + 1 };
             const orientation = this.tetrimino.orientation;
 
             const success = this.move(newOrigin, orientation);
@@ -385,7 +435,7 @@
                     const y = origin.y + i;
 
                     if (!(0 <= x && x < X) ||
-                            !(0 <= y && y < Y) || this.grid[x][y].occupied) {
+                        !(0 <= y && y < Y) || this.grid[x][y].occupied) {
                         return true;
                     }
                 }
@@ -436,7 +486,7 @@
 
     function shuffle(a) {
         for (let i = a.length - 1; i > 0; --i) {
-            const j = Math.floor(Math.random() * (i+1));
+            const j = Math.floor(Math.random() * (i + 1));
 
             const temp = a[i];
             a[i] = a[j];
@@ -475,7 +525,7 @@
         return Math.min(window.Tetris.canvas.width / WIDTH, window.Tetris.canvas.height / HEIGHT);
     }
 
-    window.onload = function() {
+    window.onload = function () {
         window.Tetris = new Tetris();
         window.Tetris.canvas = document.getElementById("canvas");
         window.Tetris.context = window.Tetris.canvas.getContext("2d");
