@@ -392,12 +392,14 @@
         },
     };
 
-    function Cell(x, y) {
-        this.x = x;
-        this.y = y;
-        this.occupied = false;
+    class Cell {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.occupied = false;
+        }
 
-        this.render = function(ctx) {
+        render(ctx) {
             var ratio = getScreenRatio();
 
             if (this.occupied) {
@@ -413,14 +415,14 @@
                 px(BLOCK_SIZE), px(BLOCK_SIZE));
         }
 
-        this.clear = function(ctx) {
+        clear(ctx) {
             ctx.clearRect(
                 px(GRID_X_OFFSET + this.x * BLOCK_SIZE),
                 px(GRID_Y_OFFSET + this.y * BLOCK_SIZE),
                 px(BLOCK_SIZE), px(BLOCK_SIZE));
         }
 
-        this.fill = function(ctx) {
+        fill(ctx) {
             ctx.fillStyle = this.color;
             ctx.fillRect(
                 px(GRID_X_OFFSET + this.x * BLOCK_SIZE),
